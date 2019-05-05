@@ -1,0 +1,1 @@
+AStyle --recursive	--style=ansi  --indent=spaces=4  --add-brackets  --convert-tabs  --indent-preprocessor  --align-pointer=name  --pad-oper  --break-blocks  --indent-switches *.c *.h
