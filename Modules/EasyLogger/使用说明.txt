@@ -1,0 +1,15 @@
+移植：
+easylogger/port文件，参看文档docs/zh/port/kernel.md,最主要是elog_port_output()的实现
+
+配置：
+easylogger/inc/elog_cfg.h
+
+使用：
+1.easylogger的api文档是docs/zh/api/kernel.md
+
+
+2.
+已经实现了两种log输出，分别是把log输出到flash和内存上，其中:
+输出到flash的，需要主动调用PFLog_Clear(),实现log清除，才能开始写log。
+
+输出到内存的（RamLog），elog配置采用缓冲方式，使用的是多个内存块组成log输出空间。依次把缓存log输出到内存块上，当当前内存块上的空间不足时，就获取下一个内存块，如果没有空内存块了，就把log时间最远的内存块清空，用于保存新的log。
