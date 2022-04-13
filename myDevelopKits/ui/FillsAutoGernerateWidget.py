@@ -153,7 +153,7 @@ class FilesAutoWidgetCls(QWidget, Ui_FilesAutoForm):
 
             cfgen = CFilsGenCls()
             cfgen.GenCFiles(self.temp_c_filename, dstFnameC, 1, dstFnameH)
-            cfgen.GenHFiles(self.temp_h_filename, dstFnameH)
+            cfgen.GenHFilesNew(self.temp_h_filename, dstFnameH)
 
 
             cf.set("AUTO_GEN_TAB", 'TEMPLATE_C_FILE', self.temp_c_filename)
@@ -183,7 +183,7 @@ class FilesAutoWidgetCls(QWidget, Ui_FilesAutoForm):
                 return
 
             cfgen = CFilsGenCls()
-            cfgen.GenCFiles(self.temp_c_filename, dstFnameC)
+            cfgen.GenCFiles(self.temp_c_filename, dstFnameC, 0, dstFnameC)
 
 
             cf.set("AUTO_GEN_TAB", 'TEMPLATE_C_FILE', self.temp_c_filename)
@@ -209,7 +209,7 @@ class FilesAutoWidgetCls(QWidget, Ui_FilesAutoForm):
                 return
 
             cfgen = CFilsGenCls()
-            cfgen.GenHFiles(self.temp_h_filename, dstFnameH)
+            cfgen.GenHFilesNew(self.temp_h_filename, dstFnameH)
 
             cf.set("AUTO_GEN_TAB", 'TEMPLATE_H_FILE', self.temp_h_filename)
             cf.set("AUTO_GEN_TAB", 'DST_H_PATH', self.dest_h_dir)
@@ -253,26 +253,40 @@ class CFilsGenCls():
                 self.lines.append(line)
                 #line.find(" Date:----.--.--")
 
+            wrlines = list()
+            hndef = Hname.split("/")[-1]
+            headname_pure = hndef[0:-2]
+
             line_idx = 0
             for rLine in self.lines:
                 ret = rLine.find(" Date:----.--.--")
                 if -1 != ret:
                     nowDate= datetime.now().strftime('%Y.%m.%d')  # 现在
-                    self.lines[line_idx] = " Date:"+nowDate + "\n"
-                    #self.lines[line_idx] = rLine
+                    wrlines.append(" Date:"+nowDate + "\n")
+                    continue
 
                 ret = rLine.find("TEMPLATE_FILE")
                 if -1 != ret:
                     if both:
-                        hndef = Hname.split("/")[-1]
-                        self.lines[line_idx] = self.lines[line_idx].replace("TEMPLATE_FILE.h", hndef)
+                        wrlines.append(rLine.replace("TEMPLATE_FILE", headname_pure))
                     else:
-                        self.lines[line_idx] = "\n"
+                        ret = rLine.find("TEMPLATE_FILE.h")
+                        if -1 != ret:
+                            pass
+                        else:
+                            wrlines.append(rLine.replace("TEMPLATE_FILE", headname_pure))
+                    continue
+
+                ret = rLine.find("xxxx")
+                if -1 != ret:
+                    wrlines.append(rLine.replace("xxxx", headname_pure.upper()))
+                else:
+                    wrlines.append(rLine)
 
                 line_idx += 1
 
             with open(CDestf, "w") as f:
-                f.writelines(self.lines)
+                f.writelines(wrlines)
                 f.close()
 
         print(self.lines)
@@ -305,6 +319,41 @@ class CFilsGenCls():
                 f.close()
 
         print(self.lines)
+
+    def GenHFilesNew(self, HTempf, HDestf):
+        self.lines.clear()
+        with open(HTempf, "r") as f:
+            pathlist = HDestf.split('/')
+            hn = pathlist[-1].upper()[0:-2]
+
+            for rLine in f.readlines():
+                #self.lines.append(line)
+
+                line_idx = 0
+            #for rLine in self.lines:
+                ret = rLine.find("xxxx")
+                if -1 != ret:
+                    rLine = rLine.replace("xxxx", hn)
+                line_idx += 1
+                self.lines.append(rLine)
+
+            with open(HDestf, "w") as f:
+                f.writelines(self.lines)
+                f.close()
+
+        print(self.lines)
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 class GenFCls(Enum):

@@ -1,24 +1,27 @@
-/******************Cloudoptek Raman project*********************
-(c) 2018 Cloudoptek Co. Ltd.
- All rights reserved.
+/**************************************************************
+ Description:
  Author: winkey su
  Date:----.--.--
 ***************************************************************/
-#include "basic_f.h"
-#include "glb_cfg.h"
-#include "utils.h"
-#include "macro_func.h"
-#include "FreeRtos.h"
-#include "TEMPLATE_FILE.h"		
+#ifdef xxxx_EN
+#include "TEMPLATE_FILE.h"
 
-
-#define LOG_TAG      "temp"
+#define LOG_TAG      		"TEMPLATE_FILE"
+#define MY_LOG_LVL  		ELOG_LVL_INFO
+#undef LOG_LVL
+#if defined(MY_LOG_LVL)
+    #define LOG_LVL       	MY_LOG_LVL
+#endif
 #include "winLog.h"
 
+#ifdef xxxx_DEBUG
+#define DEBUG_ATTRIBUTE                 
+#else
+#define DEBUG_ATTRIBUTE  	static
+#endif
 
 
 //***************************macro******************************
-
 
 //***************************typedef******************************
 
@@ -37,7 +40,5 @@
 
 
 
-
-
-
+#endif
 
